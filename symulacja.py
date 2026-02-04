@@ -1,7 +1,7 @@
 from vpython import *
 import numpy as np
 
-# --- Konfiguracja sceny ---
+#scena
 scene = canvas(title="Symulacja Pola Magnetycznego (Dynamiczna Siatka)", width=1200, height=700, background=color.black)
 scene.forward = vector(-0.8, -0.6, -1)
 
@@ -59,20 +59,20 @@ class MFieldSim():
         self.clear_scene()
         self.status_text.text = f"Aktualny kształt: <b>{shape_type}</b>"
 
-        # Domyslne zakresy siatki (zostaną nadpisane dla specyficznych kształtów)
+        #domyslne ograniczenia (jak nie damy specyficznych)
         z_min, z_max = -3, 3
         x_min, x_max = -self.dist_limit, self.dist_limit
 
-        # --- DEFINICJE I DOPASOWANIE ZAKRESU ---
+        #ustawienia ograniczajace dla danych ksztaltow
         if shape_type == "Prosty":
             self.add_segment(vector(0, 0, -6), vector(0, 0, 6))
-            z_min, z_max = -6, 6  # Rozciągamy siatkę w pionie
+            z_min, z_max = -6, 6
 
         elif shape_type == "Kształt L":
             self.add_segment(vector(0, 0, -4), vector(0, 0, 2))
             self.add_segment(vector(0, 0, 2), vector(5, 0, 2))
             z_min, z_max = -4, 4
-            x_max = 6  # Rozciągamy siatkę w bok dla ramienia L
+            x_max = 6
 
         elif shape_type == "Kształt U":
             w, h = 2.5, 4.0
@@ -90,8 +90,8 @@ class MFieldSim():
                                  vector(radius * cos(t2), radius * sin(t2), 0))
             z_min, z_max = -3, 3
 
-        # --- GENEROWANIE SIATKI ---
-        step = 1.0  # Gęstsza siatka
+        #siatka wektorowa xyz
+        step = 1.0
         for x in np.arange(x_min, x_max + step, step):
             for y in np.arange(-self.dist_limit, self.dist_limit + step, step):
                 for z in np.arange(z_min, z_max + step, step):
@@ -111,7 +111,7 @@ class MFieldSim():
                         ))
 
 
-# --- Inicjalizacja ---
+#nicjalizacja
 sim = MFieldSim()
 scene.append_to_caption("\n\n Wybierz kształt przewodu: ")
 
@@ -122,7 +122,7 @@ def handle_menu(m):
 
 menu(choices=['Prosty', 'Kształt L', 'Kształt U', 'Okrąg'], index=0, bind=handle_menu)
 
-# Start od prostego kabla, żeby sprawdzić nową siatkę
+#punkt startowy od czego zaczynamy
 sim.update_grid("Prosty")
 
 while True:
